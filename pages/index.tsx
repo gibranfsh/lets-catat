@@ -131,12 +131,14 @@ const Home = ({ notes }: Notes) => {
         <input type="text"
           placeholder='Title'
           value={form.title}
+          required
           onChange={e => setForm({ ...form, title: e.target.value })}
           className='border-2 rounded border-gray-600 p-1'
         />
         <textarea
           placeholder='Content'
           value={form.content}
+          required
           onChange={e => setForm({ ...form, content: e.target.value })}
           className='border-2 rounded border-gray-600 p-1'
         />
@@ -175,6 +177,7 @@ const Home = ({ notes }: Notes) => {
                 <label className="mb-2 font-bold">Title</label>
                 <input type="text"
                   placeholder='Title'
+                  required
                   value={form.title}
                   onChange={e => setForm({ ...form, title: e.target.value })}
                   className='border-2 rounded border-gray-600 p-1'
@@ -185,6 +188,7 @@ const Home = ({ notes }: Notes) => {
                 <textarea
                   placeholder='Content'
                   value={form.content}
+                  required
                   onChange={e => setForm({ ...form, content: e.target.value })}
                   className='border-2 rounded border-gray-600 p-1'
                 />
