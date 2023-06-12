@@ -5,7 +5,7 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
+import { useSession, getSession } from 'next-auth/react'
 
 interface Notes {
     notes: {
@@ -21,37 +21,19 @@ interface FormData {
     id: string
 }
 
-const Home = ({ notes }: Notes) => {
+const Note = ({ notes }: Notes) => {
     const [form, setForm] = useState<FormData>({
         title: '',
         content: '',
         id: ''
     })
     const [showPopup, setShowPopup] = useState(false);
-    const { data: session } = useSession()
+
     const router = useRouter()
 
     const refreshData = () => {
         router.replace(router.asPath)
     }
-
-    // const create = async () => {
-    //   try {
-    //     const res = await fetch('http://localhost:3000/api/create', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json'
-    //       },
-    //       body: JSON.stringify(form)
-    //     })
-
-    //     const data = await res.json()
-    //     setForm({ title: '', content: '', id: '' })
-    //     console.log(data)
-    //   } catch (error) {
-    //     console.log(error)
-    //   }
-    // }
 
     async function createNote(formData: FormData) {
         try {
@@ -122,7 +104,7 @@ const Home = ({ notes }: Notes) => {
         setShowPopup(false);
     };
 
-
+    // if (session) {
     return (
         <div>
             <h1 className="text-center font-bold text-2xl mt-4">LetsCatat</h1>
@@ -205,11 +187,30 @@ const Home = ({ notes }: Notes) => {
             )}
         </div>
     )
+    // } else {
+    //     // Redirect to home page
+    //     useEffect(() => {
+    //         router.push('/')
+    //     }, [])
+
+    //     return null
+    // }
 }
 
-export default Home
+export default Note
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const session = await getSession(context);
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        };
+    }
+
     const notes = await prisma.note.findMany({
         select: { // select only the fields you need
             id: true,
@@ -217,6 +218,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
             content: true
         }
     })
+
     return {
         props: {
             notes

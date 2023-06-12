@@ -1,10 +1,14 @@
-import { DefaultSession } from "next-auth"
-
+import { NextPage } from 'next';
 interface UserCardProps {
-    user: DefaultSession["user"] | null;
+    user: {
+        name?: string | null | undefined;
+        email?: string | null | undefined;
+        image?: string | null | undefined;
+        role?: string | null | undefined;
+    };
 }
 
-const UserCard: React.FC<UserCardProps> = ({ user }) => {
+const UserCard: NextPage<UserCardProps> = ({ user }) => {
     return (
         <div className="flex flex-col items-center justify-center mt-8">
             {user && (
@@ -16,6 +20,7 @@ const UserCard: React.FC<UserCardProps> = ({ user }) => {
                     />
                     <h1 className="text-2xl font-bold mb-2">{user.name || ""}</h1>
                     <p className="text-gray-600">{user.email || ""}</p>
+                    <p className="text-gray-600">role: {user.role || ""}</p>
                 </div>
             )}
         </div>

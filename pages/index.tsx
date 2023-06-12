@@ -3,6 +3,13 @@ import Link from 'next/link';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import UserCard from './components/userCard';
 
+interface User {
+  name?: string | null | undefined;
+  email?: string | null | undefined;
+  image?: string | null | undefined;
+  role?: string | null | undefined;
+};
+
 const Home: NextPage = () => {
   const { data: session } = useSession();
   console.log(session);
@@ -21,7 +28,7 @@ const Home: NextPage = () => {
           <button onClick={() => signIn("google")} className="bg-blue-500 text-white px-4 py-2 rounded">Login with Google</button>
         )}
       </div>
-      {session && <UserCard user={session.user} />}
+      {session && <UserCard user={session.user as User} />}
     </div>
   );
 };
