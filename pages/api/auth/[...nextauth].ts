@@ -11,6 +11,7 @@ const authOptions: NextAuthOptions = {
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
         }),
     ],
+    secret: process.env.SECRET,
     callbacks: {
         session: async ({ session, token, user, newSession, trigger }) => {
             // Skip insertion when session is being invalidated
