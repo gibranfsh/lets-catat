@@ -14,22 +14,15 @@ const authOptions: NextAuthOptions = {
     callbacks: {
         session: async ({ session, token, user, newSession, trigger }) => {
             // Skip insertion when session is being invalidated
-            console.log("trigger", trigger)
             if (trigger === 'signout' as string) {
                 return Promise.resolve(session);
             }
-
-            // if (!newSession) {
-            //     // Skip insertion when not a new session (e.g., session refresh)
-            //     return Promise.resolve(session);
-            // }
 
             if (session.user) {
                 const client = await clientPromise;
                 const db = client.db();
 
                 const existingUser = await db.collection('users').findOne({ email: user.email });
-                // console.log("existingUser", existingUser);
 
                 // Modify the user object by adding the role property, use existing role if it exists, otherwise set to 'user'
                 const modifiedUser = {

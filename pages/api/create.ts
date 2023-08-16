@@ -2,11 +2,11 @@ import { prisma } from '../../lib/prisma';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const { title, content } = req.body;
-
+    const { userId, title, content } = req.body;
     try {
         await prisma.note.create({
             data: {
+                userId,
                 title,
                 content,
             },

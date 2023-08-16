@@ -1,36 +1,41 @@
-import type { GetServerSideProps, NextPage } from 'next'
+import type { GetServerSideProps } from 'next'
 import { prisma } from '../lib/prisma'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
 import { useRouter } from 'next/router'
-import { useState, useEffect } from 'react'
-import { useSession, getSession } from 'next-auth/react'
+import { useState } from 'react'
+import { getSession } from 'next-auth/react'
 
-interface Notes {
-    notes: {
-        id: string
-        title: string
-        content: string
-    }[];
+interface Note {
+    id: string
+    userId: string
+    title: string
+    content: string
 }
 
 interface FormData {
+    id: string
+    userId: string
     title: string
     content: string
-    id: string
 }
 
-const Note = ({ notes }: Notes) => {
+interface User {
+    id: string
+    name: string
+    email: string
+    image?: string
+    emailVerified?: string
+    role: string
+}
+
+const Note = ({ user, notes }: { user: User, notes: Note[] }) => {
     const [form, setForm] = useState<FormData>({
+        userId: user?.id,
         title: '',
         content: '',
         id: ''
     })
     const [showPopup, setShowPopup] = useState(false);
-
     const router = useRouter()
-
     const refreshData = () => {
         router.replace(router.asPath)
     }
@@ -45,10 +50,9 @@ const Note = ({ notes }: Notes) => {
                 body: JSON.stringify(formData)
             })
 
-            const data = await res.json()
-            setForm({ title: '', content: '', id: '' })
+            await res.json()
+            setForm({ id: '', userId: user?.id, title: '', content: '' })
             refreshData()
-            console.log(data)
         } catch (error) {
             console.log(error)
         }
@@ -60,9 +64,8 @@ const Note = ({ notes }: Notes) => {
                 method: 'DELETE'
             })
 
-            const data = await res.json()
+            await res.json()
             refreshData()
-            console.log(data)
         } catch (error) {
             console.log(error)
         }
@@ -78,10 +81,9 @@ const Note = ({ notes }: Notes) => {
                 body: JSON.stringify(form)
             })
 
-            const data = await res.json()
-            setForm({ title: '', content: '', id: '' })
+            await res.json()
+            setForm({ id: '', userId: user?.id, title: '', content: '' })
             refreshData()
-            console.log(data)
         } catch (error) {
             console.log(error)
         }
@@ -104,10 +106,9 @@ const Note = ({ notes }: Notes) => {
         setShowPopup(false);
     };
 
-    // if (session) {
     return (
         <div>
-            <h1 className="text-center font-bold text-2xl mt-4">LetsCatat</h1>
+            <h1 className="text-center font-bold text-2xl mt-4">LetsCatat for KAMI Foundation</h1>
             <form onSubmit={e => {
                 e.preventDefault()
                 handleSubmit(form)
@@ -126,6 +127,12 @@ const Note = ({ notes }: Notes) => {
                     onChange={e => setForm({ ...form, content: e.target.value })}
                     className='border-2 rounded border-gray-600 p-1'
                 />
+                <button
+                    className="bg-gray-500 text-white rounded p-1 mt-4 transition duration-300 ease-in-out hover:bg-gray-600 hover:shadow-lg"
+                    onClick={() => router.push("/")}
+                >
+                    Back to Home Page
+                </button>
 
                 <button type='submit' className='bg-blue-500 text-white rounded p-1 transition duration-300 ease-in-out hover:bg-blue-600 hover:shadow-lg'>Add +</button>
             </form>
@@ -187,14 +194,6 @@ const Note = ({ notes }: Notes) => {
             )}
         </div>
     )
-    // } else {
-    //     // Redirect to home page
-    //     useEffect(() => {
-    //         router.push('/')
-    //     }, [])
-
-    //     return null
-    // }
 }
 
 export default Note
@@ -211,9 +210,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
     }
 
+    const user = session.user as User;
+
+    // find notes by user id
     const notes = await prisma.note.findMany({
-        select: { // select only the fields you need
+        where: {
+            userId: user.id
+        },
+        select: {
             id: true,
+            userId: true,
             title: true,
             content: true
         }
@@ -221,6 +227,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     return {
         props: {
+            user,
             notes
         }
     }

@@ -12,7 +12,7 @@ interface User {
 
 const Home: NextPage = () => {
   const { data: session } = useSession();
-  console.log(session);
+  
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-4xl font-bold mb-6">Welcome to LetsCatat</h1>
