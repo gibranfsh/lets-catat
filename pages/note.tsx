@@ -131,7 +131,7 @@ const Note = ({ user, notes }: { user: User, notes: Note[] }) => {
                     className="bg-gray-500 text-white rounded p-1 mt-4 transition duration-300 ease-in-out hover:bg-gray-600 hover:shadow-lg"
                     onClick={() => router.push("/")}
                 >
-                    Back to Home Page
+                    Back to Homepage
                 </button>
 
                 <button type='submit' className='bg-blue-500 text-white rounded p-1 transition duration-300 ease-in-out hover:bg-blue-600 hover:shadow-lg'>Add +</button>
