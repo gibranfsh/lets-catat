@@ -42,7 +42,7 @@ const Note = ({ user, notes }: { user: User, notes: Note[] }) => {
 
     async function createNote(formData: FormData) {
         try {
-            const res = await fetch('http://localhost:3000/api/create', {
+            const res = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + '/api/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -60,7 +60,7 @@ const Note = ({ user, notes }: { user: User, notes: Note[] }) => {
 
     async function deleteNote(id: string) {
         try {
-            const res = await fetch(`http://localhost:3000/api/note/${id}`, {
+            const res = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + `/api/note/${id}`, {
                 method: 'DELETE'
             })
 
@@ -73,7 +73,7 @@ const Note = ({ user, notes }: { user: User, notes: Note[] }) => {
 
     async function updateNote(id: string) {
         try {
-            const res = await fetch(`http://localhost:3000/api/note/${id}`, {
+            const res = await fetch(process.env.NEXT_PUBLIC_SERVER_URL + `/api/note/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
